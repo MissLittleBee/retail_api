@@ -49,15 +49,17 @@
     <p>This page presents the development of the task according to the assignment.</p>
     <p>Choose your data output:</p>
     <div class="button-container">
-        <button onclick="window.location.href='url_here/count'">
-            Count Products in File
-        </button>
-        <button onclick="window.location.href='url_here/names'">
-            Get Product Names in File
-        </button>
-        <button onclick="window.location.href='url_here/spare_parts'">
-            Find Spare Parts in File
-        </button>
+        <a href="{{ url_for('count_products') }}">
+            <button>Count products in file</button>
+        </a>
+
+        <a href="{{ url_for('names') }}">
+            <button>Get product names in file</button>
+        </a>
+
+        <a href="{{ url_for('get_spare_parts') }}">
+            <button>Find spare parts in file</button>
+        </a>
     </div>
 </body>
 </html>

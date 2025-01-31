@@ -1,4 +1,5 @@
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, Response
+import json
 from lxml import etree
 import logging
 
@@ -44,11 +45,11 @@ class ProductParser:
         logger.debug(f"Spare parts found: {spare_parts}")
         return spare_parts
 
-logger = logging.getLogger(__name__) # initialization logger
+logger = logging.getLogger(__name__)
 
-parser = ProductParser("export_full.xml") # initialization parser for parsing XML
+parser = ProductParser("export_full.xml")
 
-app = Flask(__name__) # initialization Flask app
+app = Flask(__name__)
 
 @app.route("/")
 def index():
@@ -57,18 +58,26 @@ def index():
 
 @app.route("/count", methods=["GET"])
 def count_products():
-    logger.info(f"App - Products counted.")
+    logger.info("App - Products counted.")
     return jsonify({"product_count": parser.get_product_count()})
 
 @app.route("/names", methods=["GET"])
 def names():
-    logger.info(f"App - Product names returned.")
-    return jsonify({"product_names": parser.get_product_names()})
+    logger.info("App - Product names returned.")
+    data = {"product_names": parser.get_product_names()}
+    return Response(
+        json.dumps(data, ensure_ascii=False),
+        mimetype='application/json'
+    )
 
-@app.route("/spare_parts", methods = ["GET"])
-def spare_parts():
-    logger.info(f"App - Spare parts returned.")
-    return jsonify({"product_spare_parts": parser.get_spare_parts()})
+@app.route("/spare_parts", methods=["GET"])
+def get_spare_parts():
+    logger.info("App - Spare parts returned.")
+    data = {"product_spare_parts": parser.get_spare_parts()}
+    return Response(
+        json.dumps(data, ensure_ascii=False),
+        mimetype='application/json'
+    )
 
 if __name__ == '__main__':
     logger.info("Starting Flask app.")
