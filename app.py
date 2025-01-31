@@ -60,11 +60,16 @@ def create_app(xml_file="export_full.xml"):
         return jsonify({"product_count": parser.get_product_count()})
 
     @app.route("/names", methods=["GET"])
+    @app.route("/names", methods=["GET"])
     def names():
         logger.info("App - Product names returned.")
-        data = {"product_names": parser.get_product_names()}
+        product_names = parser.get_product_names()
+        data = {"product_names": product_names}
+
+        json_response = json.dumps(data, ensure_ascii=False, indent=4)
+
         return Response(
-            json.dumps(data, ensure_ascii=False),
+            json_response,
             mimetype='application/json'
         )
 
