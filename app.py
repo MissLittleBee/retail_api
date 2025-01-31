@@ -80,6 +80,6 @@ def create_app(xml_file="export_full.xml"):
     return app
 
 if __name__ == '__main__':
-    app = create_app()  # Vytvoření aplikace s výchozím XML souborem
+    app = create_app()
     logger.info("Starting Flask app.")
     app.run(debug=True)
