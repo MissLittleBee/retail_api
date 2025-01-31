@@ -1,0 +1,9 @@
+<products>
+    <item name="Product1">
+        <parts>Part1</parts>
+    </item>
+    <item name="Product2">
+        <parts>Part2</parts>
+    </item>
+    <item name="Product3"/>
+</products>

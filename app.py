@@ -29,7 +29,7 @@ class ProductParser:
         return count
 
     def get_product_names(self):
-        names = [item.get('name')for item in self.root.findall(".//item")]
+        names = [item.get('name') for item in self.root.findall(".//item")]
         logger.debug(f"Product names: {names}")
         return names
 
@@ -39,46 +39,47 @@ class ProductParser:
             spare_part = item.find(".//parts")
             if spare_part is not None:
                 spare_parts.append({
-                    "product" : item.get("name"),
-                    "spare_part" : spare_part.text
+                    "product": item.get("name"),
+                    "spare_part": spare_part.text
                 })
         logger.debug(f"Spare parts found: {spare_parts}")
         return spare_parts
 
-logger = logging.getLogger(__name__)
+def create_app(xml_file="export_full.xml"):
+    app = Flask(__name__)
+    parser = ProductParser(xml_file)  # Inicializace ProductParser uvnitř create_app
 
-parser = ProductParser("export_full.xml")
+    @app.route("/")
+    def index():
+        logger.info("Home page accessed.")
+        return render_template('index.html')
 
-app = Flask(__name__)
+    @app.route("/count", methods=["GET"])
+    def count_products():
+        logger.info("App - Products counted.")
+        return jsonify({"product_count": parser.get_product_count()})
 
-@app.route("/")
-def index():
-    logger.info("Home page accessed.")
-    return render_template('index.html')
+    @app.route("/names", methods=["GET"])
+    def names():
+        logger.info("App - Product names returned.")
+        data = {"product_names": parser.get_product_names()}
+        return Response(
+            json.dumps(data, ensure_ascii=False),
+            mimetype='application/json'
+        )
 
-@app.route("/count", methods=["GET"])
-def count_products():
-    logger.info("App - Products counted.")
-    return jsonify({"product_count": parser.get_product_count()})
+    @app.route("/spare_parts", methods=["GET"])
+    def get_spare_parts():
+        logger.info("App - Spare parts returned.")
+        data = {"product_spare_parts": parser.get_spare_parts()}
+        return Response(
+            json.dumps(data, ensure_ascii=False),
+            mimetype='application/json'
+        )
 
-@app.route("/names", methods=["GET"])
-def names():
-    logger.info("App - Product names returned.")
-    data = {"product_names": parser.get_product_names()}
-    return Response(
-        json.dumps(data, ensure_ascii=False),
-        mimetype='application/json'
-    )
-
-@app.route("/spare_parts", methods=["GET"])
-def get_spare_parts():
-    logger.info("App - Spare parts returned.")
-    data = {"product_spare_parts": parser.get_spare_parts()}
-    return Response(
-        json.dumps(data, ensure_ascii=False),
-        mimetype='application/json'
-    )
+    return app
 
 if __name__ == '__main__':
+    app = create_app()  # Vytvoření aplikace s výchozím XML souborem
     logger.info("Starting Flask app.")
     app.run(debug=True)
