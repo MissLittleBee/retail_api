@@ -82,7 +82,6 @@ class ProductParser:
         logger.debug(f"Spare parts found: {spare_parts}")
         return spare_parts
 
-#-----------------------------------------------------------------------------------------------------------------
 def create_app():
     app = Flask(__name__)
     logger.debug("Flask app initialized.")
@@ -130,16 +129,16 @@ def create_app():
     def get_spare_parts():
         logger.info("App - Spare parts returned.")
         data = {"product_spare_parts": parser.get_spare_parts()}
+        json_response = json.dumps(data, ensure_ascii=False, indent=4)
+
         return Response(
-            json.dumps(data, ensure_ascii=False),
+            json_response,
             mimetype='application/json'
         )
 
     return app
 
-    #----------------------------------------------------------------------------------------------------------------
-
 if __name__ == '__main__':
     app = create_app()
     logger.info("Starting Flask app.")
-    app.run(debug=True)
+    app.run(debug=False) #if true, testing server restarted and run again
