@@ -63,20 +63,23 @@ class ProductParser:
         self.root = self.tree.getroot()
 
     def get_product_count(self):
+        """ Returns totally sum of all products in XML file, regardless of duplicate items in the file"""
         count = len(self.root.findall(".//item"))
         logger.debug(f"Product count: {count}")
         return count
 
     def get_product_names(self):
-        names = [item.get('name') for item in self.root.findall(".//item")]
+        """Returns list of product names without duplicity names. """
+        names = {item.get('name') for item in self.root.findall(".//item")}
         logger.debug(f"Product names: {names}")
-        return names
+        return list(names)
 
     def get_spare_parts(self):
+        """ Returns dictionary of products with their spare parts """
         product_spare_parts = []
         for item in self.root.findall(".//item"):
             product_name = item.get("name")
-            spare_parts = item.findall(".//parts//part//item")  # Získáme všechny položky v rámci parts
+            spare_parts = item.findall(".//parts//part//item")
             if spare_parts:
                 parts_list = []
                 for spare_part in spare_parts:
