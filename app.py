@@ -16,6 +16,8 @@ formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 console_handler.setFormatter(formatter)
 logger.addHandler(console_handler)
 
+download_url = "https://www.retailys.cz/wp-content/uploads/astra_export_xml.zip"
+
 class File_manager:
     """
     A class representating downloading and extracting ZIP file
@@ -71,22 +73,29 @@ class ProductParser:
         return names
 
     def get_spare_parts(self):
-        spare_parts = []
+        product_spare_parts = []
         for item in self.root.findall(".//item"):
-            spare_part = item.find(".//parts")
-            if spare_part is not None:
-                spare_parts.append({
-                    "product": item.get("name"),
-                    "spare_part": spare_part.text
+            product_name = item.get("name")
+            spare_parts = item.findall(".//parts//part//item")  # Získáme všechny položky v rámci parts
+            if spare_parts:
+                parts_list = []
+                for spare_part in spare_parts:
+                    parts_list.append({
+                        "code": spare_part.get("code"),
+                        "name": spare_part.get("name")
+                    })
+                product_spare_parts.append({
+                    "product": product_name,
+                    "spare_part": parts_list
                 })
-        logger.debug(f"Spare parts found: {spare_parts}")
-        return spare_parts
+        logger.debug(f"Spare parts found: {product_spare_parts}")
+        return {"product_spare_parts": product_spare_parts}
 
 def create_app():
     app = Flask(__name__)
     logger.debug("Flask app initialized.")
     output_dir = "data"
-    file_manager = File_manager("https://www.retailys.cz/wp-content/uploads/astra_export_xml.zip", output_dir)
+    file_manager = File_manager(download_url, output_dir)
     file_manager.download_zip()
     file_manager.extract_zip()
 
