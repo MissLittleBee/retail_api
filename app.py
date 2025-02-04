@@ -154,3 +154,5 @@ if __name__ == '__main__':
     app = create_app()
     logger.info("Starting Flask app.")
     app.run(debug=False) #if true, testing server restarted and run again
+
+app = create_app()
