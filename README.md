@@ -38,7 +38,8 @@ The main script that contains the Flask application and the logic for parsing th
 The script includes unit tests to ensure the functionality works as expected. 
 To deploy this script live, you can use a service like Heroku, PythonAnywhere, or any other web hosting service that supports Python and Flask.
 
-
+**How it can looks like?**
+![Screenshot from app](screenshot.png)
 Author
 Barbora H.
 
