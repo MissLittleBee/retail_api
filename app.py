@@ -22,12 +22,12 @@ class File_manager:
     """
     A class representating downloading and extracting ZIP file
     Atributes:
-     file_url - source url for donloading ZIP file
+     file_url - source url for downloading ZIP file
      output_dir - directory for saving output file
     """
 
     def __init__(self, file_url, output_dir):
-        logger.debug(f"Initializing File_manager with file: {file_url}")
+        logger.debug(f"Initializing File_manager.")
         self.file_url = file_url
         self.output_dir = output_dir
         self.zip_path = os.path.join(output_dir, "data.zip")
@@ -55,9 +55,6 @@ class ProductParser:
     """
     def __init__(self, xml_file):
         logger.debug(f"Initializing ProductParser with file: {xml_file}")
-
-        if not os.path.exists(xml_file):
-            raise FileNotFoundError(f"XML file {xml_file} not found.")
 
         self.tree = etree.parse(xml_file)
         self.root = self.tree.getroot()
@@ -99,17 +96,12 @@ def create_app():
     logger.debug("Flask app initialized.")
     output_dir = "data"
     file_manager = File_manager(download_url, output_dir)
-    file_manager.download_zip()
-    file_manager.extract_zip()
 
     xml_file = None
     for file in os.listdir(output_dir):
         if file.endswith(".xml"):
             xml_file = os.path.join(output_dir, file)
             break # should be one file in zip file, end after finding first one if there are multiple ones
-
-    if not xml_file:
-        raise FileNotFoundError("XML file was not found in extracted ZIP archive.")
 
     parser = ProductParser(xml_file)
 
@@ -118,6 +110,19 @@ def create_app():
         logger.info("Home page accessed.")
         return render_template('index.html')
 
+
+    @app.route("/download_zip", methods=["POST"])
+    def download_and_extract():
+        logger.info("Downloading & extracting ZIP started.")
+
+        try:
+            file_manager.download_zip()
+            file_manager.extract_zip()
+            logger.info("Downloading and extracting ZIP file completed successfully.")
+            return jsonify({"status": "success", "message": "ZIP file downloaded and extracted successfully."})
+        except Exception as exception:
+            logger.error(f"Error during download/extract: {str(exception)}")
+            return jsonify({"status": "error", "message": str(exception)}), 500
 
     @app.route("/count", methods=["GET"])
     def count_products():
@@ -148,11 +153,12 @@ def create_app():
             mimetype='application/json'
         )
 
+
     return app
 
 if __name__ == '__main__':
     app = create_app()
     logger.info("Starting Flask app.")
-    app.run(debug=False) #if true, testing server restarted and run again
+    app.run(host="0.0.0.0", port=8000, debug=False)  #if true, testing server restarted and run again
 
 app = create_app()

@@ -47,12 +47,13 @@
 <body>
     <h1>Welcome to this page</h1>
     <p>This page presents the development of the task according to the assignment.</p>
-    <p>Choose your data output:</p>
+        <button id="download-btn">Download ZIP file</button>
+    <p id="status"></p>
+    <p>Choose your data output (you will get data in .json):</p>
     <div class="button-container">
         <a href="{{ url_for('count_products') }}">
             <button>Count products in file</button>
         </a>
-
         <a href="{{ url_for('names') }}">
             <button>Get product names in file</button>
         </a>
@@ -61,5 +62,18 @@
             <button>Find spare parts in file</button>
         </a>
     </div>
+
+    <script>
+        document.getElementById("download-btn").addEventListener("click", function() {
+            fetch("/download_zip", { method: "POST" })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("status").innerText = data.message;
+                })
+                .catch(error => {
+                    document.getElementById("status").innerText = "Error: " + error;
+                });
+        });
+    </script>
 </body>
 </html>

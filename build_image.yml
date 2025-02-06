@@ -1,0 +1,6 @@
+services:
+      platform:
+        build:
+          context: ./
+          dockerfile: ./Dockerfile
+        image: Barbora/xml-server
