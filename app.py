@@ -22,12 +22,12 @@ class File_manager:
     """
     A class representating downloading and extracting ZIP file
     Atributes:
-     file_url - source url for downloading ZIP file
+     file_url - source url for donloading ZIP file
      output_dir - directory for saving output file
     """
 
     def __init__(self, file_url, output_dir):
-        logger.debug(f"Initializing File_manager.")
+        logger.debug(f"Initializing File_manager with file: {file_url}")
         self.file_url = file_url
         self.output_dir = output_dir
         self.zip_path = os.path.join(output_dir, "data.zip")
@@ -55,6 +55,9 @@ class ProductParser:
     """
     def __init__(self, xml_file):
         logger.debug(f"Initializing ProductParser with file: {xml_file}")
+
+        if not os.path.exists(xml_file):
+            raise FileNotFoundError(f"XML file {xml_file} not found.")
 
         self.tree = etree.parse(xml_file)
         self.root = self.tree.getroot()
@@ -97,13 +100,13 @@ def create_app():
     output_dir = "data"
     file_manager = File_manager(download_url, output_dir)
 
-    xml_file = None
-    for file in os.listdir(output_dir):
-        if file.endswith(".xml"):
-            xml_file = os.path.join(output_dir, file)
-            break # should be one file in zip file, end after finding first one if there are multiple ones
+    def get_xml_file():
+        for file in os.listdir(output_dir):
+            if file.endswith(".xml"):
+                return os.path.join(output_dir, file)
+        else:
+            raise FileNotFoundError("XML file was not found in extracted ZIP archive.")
 
-    parser = ProductParser(xml_file)
 
     @app.route("/")
     def index():
@@ -127,11 +130,13 @@ def create_app():
     @app.route("/count", methods=["GET"])
     def count_products():
         logger.info("App - Products counted.")
+        parser = ProductParser(get_xml_file())
         return jsonify({"product_count": parser.get_product_count()})
 
     @app.route("/names", methods=["GET"])
     def names():
         logger.info("App - Product names returned.")
+        parser = ProductParser(get_xml_file())
         product_names = parser.get_product_names()
         data = {"product_names": product_names}
 
@@ -145,6 +150,7 @@ def create_app():
     @app.route("/spare_parts", methods=["GET"])
     def get_spare_parts():
         logger.info("App - Spare parts returned.")
+        parser = ProductParser(get_xml_file())
         data = {"product_spare_parts": parser.get_spare_parts()}
         json_response = json.dumps(data, ensure_ascii=False, indent=4)
 

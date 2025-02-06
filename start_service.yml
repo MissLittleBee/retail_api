@@ -1,7 +1,7 @@
 services:
   xml_server:
     command:
-      python /XML_WS/app.py
+      python /XML_SW/app.py
     image: Barbora/xml-server:latest
     container_name: xml-server
     hostname: xml-server
