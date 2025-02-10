@@ -13,7 +13,7 @@ The script is built using Flask to provide a web interface where users can acces
 - Spare Parts: Lists spare parts for products that have them, along with the associated product name.
 
 ## Requirements
-viz requirements.txt
+see requirements.txt
 
 ## How to Use
 
@@ -23,10 +23,11 @@ Run the script using the following command:
 
 Access the web interface:
 
-Open your browser and go to [http://127.0.0.1:5000/](url)
+Open your browser and go to address you can check in console. 
 You will see a simple web interface with links to the following endpoints:
 
-**Product Count: /count
+**Download ZIP file with data
+Product Count: /count
 Product Names: /names
 Spare Parts: /spare_parts**
 
@@ -34,8 +35,11 @@ Spare Parts: /spare_parts**
 **app.py:** 
 The main script that contains the Flask application and the logic for parsing the XML file.
 
+Project contains dockerfile for buildilng docker image and starting .yml file.
+If you want run application in docker containers, you have to build an image at first, then you can run by your addon in your ID or start upt in console with running start_service.yml.
+
 **Testing:**
-The script includes unit tests to ensure the functionality works as expected. 
+The script includes sample of tests to ensure the functionality works as expected. 
 To deploy this script live, you can use a service like Heroku, PythonAnywhere, or any other web hosting service that supports Python and Flask.
 
 **How it can looks like?**
