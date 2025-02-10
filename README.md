@@ -36,7 +36,7 @@ Spare Parts: /spare_parts**
 The main script that contains the Flask application and the logic for parsing the XML file.
 
 Project contains dockerfile for buildilng docker image and starting .yml file.
-If you want run application in docker containers, you have to build an image at first, then you can run by your addon in your ID or start upt in console with running start_service.yml.
+If you want run application in docker containers, you have to build an image at first, then you can run by your addon in your IDE or start upt in console with running start_service.yml.
 
 **Testing:**
 The script includes sample of tests to ensure the functionality works as expected. 
